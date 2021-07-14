@@ -13,7 +13,10 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #D9E6F6;
+    background-color: #A978AF;
+    background-image: url('https://wallpapercave.com/wp/wp6578590.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   img {
