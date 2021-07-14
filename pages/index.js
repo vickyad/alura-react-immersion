@@ -21,18 +21,20 @@ const ProfileSideBar = (props) => {
 }
 
 const Test = (props) => {
+  const firstSixItens = props.items.slice(0, 6)
+
   return (
     <ProfileConnectionsBoxWrapper>
       <h2 className="smallTitle">
         {props.title} ({props.items.length})
       </h2>
       <ul>
-        {props.items.map((item) => {
+        {firstSixItens.map((item) => {
           return (
-            <li key={item}>
+            <li key={item.id}>
               <a href={'#'}>
-                <img src={`https://github.com/${item}.png`} />
-                <span>{item}</span>
+                <img src={`https://github.com/${item.login}.png`} />
+                <span>{item.login}</span>
               </a>
             </li>
           )
@@ -52,7 +54,7 @@ const ComunityAndPeople = (props) => {
         {props.boxTitle} ({props.list.length})
       </h2>
       <ul>
-        {/* firstSixItens.map((item) => {
+        {firstSixItens.map((item) => {
           return (
             <li key={props.isStringList? item : item.id}>
               <a href={'#'}>
@@ -61,7 +63,7 @@ const ComunityAndPeople = (props) => {
               </a>
             </li>
           )
-        }) */}
+        })}
       </ul>
     </ProfileConnectionsBoxWrapper>
   )
@@ -80,6 +82,7 @@ export default function Home() {
       }
     ).then(
       (treatedAnswer) => {
+        console.log(treatedAnswer)
         setFollowers(treatedAnswer)
       }
     )
