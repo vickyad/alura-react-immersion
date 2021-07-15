@@ -57,8 +57,8 @@ const ComunityAndPeople = (props) => {
         {firstSixItens.map((item) => {
           return (
             <li key={props.isStringList? item : item.id}>
-              <a href={'#'}>
-                <img src={props.isStringList? `https://github.com/${item}.png` : item.image} />
+              <a href={`${props.boxTitle.toLowerCase()}/${item.id}`}>
+                <img src={props.isStringList? `https://github.com/${item}.png` : item.imageUrl} />
                 <span>{props.isStringList? item : item.title}</span>
               </a>
             </li>
@@ -71,7 +71,7 @@ const ComunityAndPeople = (props) => {
 
 export default function Home() {
   const githubUser = 'vickyad'
-  const [communities, setCommunities] = React.useState([{id: new Date().toISOString(), title: 'Eu odeio acordar cedo', image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'}])
+  const [communities, setCommunities] = React.useState([])
   const favoritePeople = ['prphawk', 'JPedroSilveira', 'AndrewLBorges', 'petcomputacaoufrgs', 'LeoHernandes', 'bbeneduzib']
 
   const [followers, setFollowers] = React.useState([])
@@ -82,22 +82,52 @@ export default function Home() {
       }
     ).then(
       (treatedAnswer) => {
-        console.log(treatedAnswer)
         setFollowers(treatedAnswer)
       }
     )
-  }, [])
 
+    fetch('https://graphql.datocms.com/', {
+      method: 'POST',
+      headers: {
+        'Authorization': '56d5370ea7bbb7c967be9feb704cb5',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({"query": `query {
+        allCommunities{
+          title
+          id
+          imageUrl
+          creatorSlug
+        }
+      }`  })
+    })
+      .then((response) => response.json())
+      .then((treatedResponse) => {
+        setCommunities(treatedResponse.data.allCommunities)
+      })
+  }, [])
 
   const handleCreateComunity = (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
     const newCommunity = {
-      id: new Date().toISOString(),
       title: formData.get('title'),
-      image: formData.get('image'),
+      imageUrl: formData.get('image'),
+      creatorSlug: githubUser,
     }  
-    setCommunities([...communities, newCommunity])  
+
+    fetch('/api/communities', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newCommunity)
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        setCommunities([...communities, data.registerCreated]);
+      })
   }
 
   return (
